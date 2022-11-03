@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:splitit/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'global.dart';
 import 'theme.dart';
 
 Future main() async {

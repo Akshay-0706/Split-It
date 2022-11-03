@@ -10,7 +10,7 @@ class Splash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig(context);
-    return Scaffold(
+    return const Scaffold(
       body: SplashBody(),
     );
   }
