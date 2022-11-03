@@ -4,19 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitit/size.dart';
 
+import '../../backend/database.dart';
+
 class HomeBody extends StatefulWidget {
-  const HomeBody({super.key});
+  const HomeBody({
+    super.key,
+    required this.balance,
+    required this.photo,
+  });
+  final double balance;
+  final String photo;
 
   @override
   State<HomeBody> createState() => _HomeBodyState();
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  FirebaseDatabase databaseRef = FirebaseDatabase.instance;
-  Future<SharedPreferences> sharedPreferences = SharedPreferences.getInstance();
-  late SharedPreferences pref;
-  late double balance;
-  bool balanceIsReady = false, prefIsReady = false;
   List<Map<dynamic, dynamic>> bills = [
         {"name": "New bill", "amount": 203},
         {"name": "New bill", "amount": 203},
@@ -48,50 +51,26 @@ class _HomeBodyState extends State<HomeBody> {
       ];
 
   @override
-  void initState() {
-    sharedPreferences.then((value) {
-      pref = value;
-
-      databaseRef.ref(pref.getString("email")!.replaceAll(".", "_")).get().then(
-        (snapshot) {
-          if (snapshot.exists) {
-            balance = double.parse(snapshot.value.toString());
-          } else {
-            databaseRef
-                .ref(pref.getString("email")!.replaceAll(".", "_"))
-                .set(0);
-            balance = 0;
-          }
-          setState(() {
-            balanceIsReady = true;
-          });
-        },
-      ).catchError((error) => print("Firebase error: $error"));
-      setState(() {
-        prefIsReady = true;
-      });
-    });
-    super.initState();
-  }
-
-  // double getBalance(FirebaseDatabase databaseRef, String email)
-  // {
-
-  // }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Column(
-      children: [
-        SizedBox(height: getHeight(40)),
-        navBarBuilder(context),
-        SizedBox(height: getHeight(40)),
-        balanceCardBuilder(context),
-        SizedBox(height: getHeight(40)),
-        Bills(bills: bills, people: people),
-      ],
-    ));
+      child: TweenAnimationBuilder(
+        tween: Tween<double>(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 500),
+        builder: (context, double opacity, child) => Opacity(
+          opacity: opacity,
+          child: Column(
+            children: [
+              SizedBox(height: getHeight(40)),
+              navBarBuilder(context),
+              SizedBox(height: getHeight(40)),
+              balanceCardBuilder(context),
+              SizedBox(height: getHeight(40)),
+              Bills(bills: bills, people: people),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Padding navBarBuilder(BuildContext context) {
@@ -109,30 +88,29 @@ class _HomeBodyState extends State<HomeBody> {
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).primaryColorDark.withOpacity(0.4),
-                  offset: const Offset(1, 1),
-                  blurRadius: 10,
-                )
-              ],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: prefIsReady
-                ? ClipRRect(
-                    clipBehavior: Clip.hardEdge,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      pref.getString("photo")!,
-                      width: getHeight(40),
-                      height: getHeight(40),
-                    ),
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColorDark.withOpacity(0.4),
+                    offset: const Offset(1, 1),
+                    blurRadius: 10,
                   )
-                : CircularProgressIndicator(
-                    color: Theme.of(context).primaryColorDark,
-                  ),
-          )
+                ],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: ClipRRect(
+                clipBehavior: Clip.hardEdge,
+                borderRadius: BorderRadius.circular(20),
+                child: Image.network(
+                  widget.photo,
+                  width: getHeight(40),
+                  height: getHeight(40),
+                ),
+              )
+              // : CircularProgressIndicator(
+              //     color: Theme.of(context).primaryColorDark,
+              //   ),
+              )
         ],
       ),
     );
@@ -154,26 +132,26 @@ class _HomeBodyState extends State<HomeBody> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Total balance: ",
+                    "Total widget.balance: ",
                     style: TextStyle(
                       color: Theme.of(context).backgroundColor,
                       fontSize: getHeight(16),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (balanceIsReady)
-                    Text(
-                      "\u{20B9} $balance",
-                      style: TextStyle(
-                        color: Theme.of(context).backgroundColor,
-                        fontSize: getHeight(15),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  if (!balanceIsReady)
-                    CircularProgressIndicator(
+                  // if (balanceIsReady)
+                  Text(
+                    "\u{20B9} ${widget.balance}",
+                    style: TextStyle(
                       color: Theme.of(context).backgroundColor,
-                    )
+                      fontSize: getHeight(15),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  // if (!balanceIsReady)
+                  //   CircularProgressIndicator(
+                  //     color: Theme.of(context).backgroundColor,
+                  //   )
                 ],
               ),
               SizedBox(height: getHeight(20)),
@@ -222,6 +200,7 @@ class Bills extends StatelessWidget {
       child: Stack(
         children: [
           Container(
+            width: double.infinity,
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColorDark,
               borderRadius: const BorderRadius.only(
@@ -231,23 +210,29 @@ class Bills extends StatelessWidget {
             ),
             child: Padding(
               padding: EdgeInsets.all(getHeight(20)),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Bills",
-                      style: TextStyle(
-                        color: Theme.of(context).backgroundColor,
-                        fontSize: getHeight(18),
-                        fontWeight: FontWeight.bold,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Bills",
+                    style: TextStyle(
+                      color: Theme.of(context).backgroundColor,
+                      fontSize: getHeight(18),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: getHeight(20)),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          ...billCard(context),
+                        ],
                       ),
                     ),
-                    SizedBox(height: getHeight(20)),
-                    ...billCard(context),
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
           ),

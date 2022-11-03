@@ -7,7 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitit/size.dart';
 
-import '../../backend/auth/auth.dart';
+import '../../backend/auth.dart';
 import 'splashContent.dart';
 
 class SplashBody extends StatefulWidget {
