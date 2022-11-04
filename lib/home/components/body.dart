@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -101,10 +102,25 @@ class _HomeBodyState extends State<HomeBody> {
               child: ClipRRect(
                 clipBehavior: Clip.hardEdge,
                 borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  widget.photo,
+                child: CachedNetworkImage(
                   width: getHeight(40),
                   height: getHeight(40),
+                  imageUrl: widget.photo,
+                  placeholder: (context, url) => Container(
+                    width: getHeight(40),
+                    height: getHeight(40),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).backgroundColor,
+                        shape: BoxShape.circle),
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor,
+                      strokeWidth: 8,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.error_outline,
+                    color: Theme.of(context).primaryColorDark,
+                  ),
                 ),
               )
               // : CircularProgressIndicator(
@@ -132,7 +148,7 @@ class _HomeBodyState extends State<HomeBody> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Total widget.balance: ",
+                    "Total balance: ",
                     style: TextStyle(
                       color: Theme.of(context).backgroundColor,
                       fontSize: getHeight(16),

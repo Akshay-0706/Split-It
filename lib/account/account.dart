@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:splitit/account/components/body.dart';
 
 class Account extends StatelessWidget {
-  const Account({super.key});
+  const Account(
+      {super.key,
+      required this.name,
+      required this.email,
+      required this.photo,
+      required this.theme,
+      required this.changeTheme});
+  final String name, email, photo, theme;
+  final Function changeTheme;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AccountBody(),
+      body: AccountBody(
+        name: name,
+        email: email,
+        photo: photo,
+        theme: theme,
+        changeTheme: changeTheme,
+      ),
     );
   }
 }

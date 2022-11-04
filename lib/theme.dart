@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ThemeChanger with ChangeNotifier {
-  static bool isThemeDark = true;
-
-  bool isDarkMode() => isThemeDark;
+  String theme = "Auto";
 
   ThemeMode currentTheme() {
-    return isThemeDark ? ThemeMode.dark : ThemeMode.light;
+    return theme == "Auto" ? ThemeMode.system : theme == "Dark" ? ThemeMode.dark : ThemeMode.light;
   }
 
-  void changeTheme() {
-    isThemeDark = !isThemeDark;
+  void changeThemeMode(String theme) {
+    this.theme = theme;
     notifyListeners();
   }
 }

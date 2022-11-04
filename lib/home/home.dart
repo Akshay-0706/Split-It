@@ -1,11 +1,15 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitit/home/components/body.dart';
 import 'package:splitit/home/components/navbar.dart';
 
 import '../account/account.dart';
 import '../backend/database.dart';
+import '../size.dart';
 import '../transfer/transfer.dart';
 import '../wallet/wallet.dart';
 
@@ -23,7 +27,7 @@ class _HomeState extends State<Home> {
   late double balance;
   late List<String> transactions;
   bool databaseIsReady = false, prefIsReady = false;
-  int current = 2;
+  int current = 0;
 
   void changeTab(int index) {
     setState(() {
@@ -31,8 +35,38 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void changeTheme(String theme) {
+    pref.setString("theme", theme);
+  }
+
   @override
   void initState() {
+    Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult result) {
+        if (result == ConnectivityResult.none) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => WillPopScope(
+              onWillPop: () async => false,
+              child: AlertDialog(
+                title: Text(
+                  "You are offline",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorLight,
+                    fontSize: getHeight(20),
+                  ),
+                ),
+                content: Lottie.asset("assets/extras/lottie_offline.json"),
+                backgroundColor: Theme.of(context).backgroundColor,
+              ),
+            ),
+          );
+        }
+      },
+    );
+
     sharedPreferences.then((value) {
       pref = value;
       Database.getBalance(databaseRef, pref.getString("email")!).then((value) {
@@ -62,13 +96,16 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-  void setBalance(double newBalance) {
-    Database.setBalance(databaseRef, pref.getString("email")!, newBalance);
+  void setBalance(double newBalance, [String? email]) {
+    Database.setBalance(
+        databaseRef, email ?? pref.getString("email")!, newBalance);
   }
 
-  void addTransactions(String transaction) {
-    transactions.add(transaction);
-    pref.setStringList("transaction", transactions);
+  void addTransaction(String transaction) {
+    setState(() {
+      transactions.add(transaction);
+    });
+    pref.setStringList("transactions", transactions);
   }
 
   @override
@@ -78,13 +115,26 @@ class _HomeState extends State<Home> {
         balance: databaseIsReady ? balance : 0,
         photo: prefIsReady ? pref.getString("photo")! : "",
       ),
-      const Transfer(),
+      Transfer(
+        name: prefIsReady ? pref.getString("name")! : "",
+        email: prefIsReady ? pref.getString("email")! : "",
+        photo: prefIsReady ? pref.getString("photo")! : "",
+        balance: databaseIsReady ? balance : 0,
+        setBalance: setBalance,
+      ),
       Wallet(
         balance: databaseIsReady ? balance : 0,
         setBalance: setBalance,
         transactions: prefIsReady ? transactions : [],
+        addTransaction: addTransaction,
       ),
-      const Account(),
+      Account(
+        name: prefIsReady ? pref.getString("name")! : "",
+        email: prefIsReady ? pref.getString("email")! : "",
+        photo: prefIsReady ? pref.getString("photo")! : "",
+        theme: prefIsReady ? pref.getString("theme")! : "Auto",
+        changeTheme: changeTheme,
+      ),
     ];
 
     return Scaffold(

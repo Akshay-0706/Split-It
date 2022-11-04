@@ -52,7 +52,7 @@ class _SplashBodyState extends State<SplashBody> {
             });
           }
           if (end == 0 && prefIsReady & !signedIn) {
-            Navigator.pushReplacementNamed(context, "/welcome");
+            Navigator.pushNamed(context, "/welcome");
           }
         },
         builder: (BuildContext context, double opacity, Widget? child) {

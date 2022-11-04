@@ -6,9 +6,10 @@ class Wallet extends StatelessWidget {
       {super.key,
       required this.balance,
       required this.setBalance,
-      required this.transactions});
+      required this.transactions,
+      required this.addTransaction});
   final double balance;
-  final Function setBalance;
+  final Function setBalance, addTransaction;
   final List<String> transactions;
 
   @override
@@ -18,6 +19,7 @@ class Wallet extends StatelessWidget {
         balance: balance,
         setBalance: setBalance,
         transactions: transactions,
+        addTransaction: addTransaction,
       ),
     );
   }

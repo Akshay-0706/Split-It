@@ -32,7 +32,6 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: getHeight(60),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColorDark,
         boxShadow: [
@@ -43,20 +42,23 @@ class _NavBarState extends State<NavBar> {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          ...List.generate(
-            iconNames.length,
-            (index) => index == current
-                ? NavSelected(
-                    iconName: iconNames[index], tabName: tabNames[index])
-                : NavItem(
-                    iconName: iconNames[index],
-                    tap: () => changeNav(index),
-                  ),
-          ),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: getHeight(10)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ...List.generate(
+              iconNames.length,
+              (index) => index == current
+                  ? NavSelected(
+                      iconName: iconNames[index], tabName: tabNames[index])
+                  : NavItem(
+                      iconName: iconNames[index],
+                      tap: () => changeNav(index),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

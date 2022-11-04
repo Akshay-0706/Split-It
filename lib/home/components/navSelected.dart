@@ -27,7 +27,6 @@ class _NavSelectedState extends State<NavSelected> {
       builder: (context, double opacity, child) => Opacity(
         opacity: opacity,
         child: Container(
-          height: getHeight(35),
           decoration: BoxDecoration(
             color: Theme.of(context).backgroundColor,
             borderRadius: BorderRadius.circular(6),

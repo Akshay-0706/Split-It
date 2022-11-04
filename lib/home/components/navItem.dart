@@ -22,7 +22,7 @@ class NavItem extends StatelessWidget {
         child: SvgPicture.asset(
           "assets/icons/$iconName.svg",
           color: Theme.of(context).backgroundColor,
-          width: getWidth(18),
+          width: getHeight(18),
         ),
       ),
     );

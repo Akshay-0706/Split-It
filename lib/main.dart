@@ -1,41 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitit/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'global.dart';
 import 'theme.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final SharedPreferences pref = await SharedPreferences.getInstance();
 
-  runApp(const MyApp());
+  runApp(MyApp(pref: pref));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.pref});
+  final SharedPreferences pref;
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late ThemeChanger themeChanger;
-
   @override
   void initState() {
-    themeChanger = ThemeChanger();
-
     final window = WidgetsBinding.instance.window;
 
-    if (window.platformBrightness == Brightness.light) {
-      themeChanger.changeTheme();
+    if (widget.pref.getString("theme") == "Light") {
+      themeChanger.changeThemeMode("Light");
+    }
+
+    if (widget.pref.getString("theme") == "Dark") {
+      themeChanger.changeThemeMode("Dark");
     }
 
     window.onPlatformBrightnessChanged = () {
-      setState(() {
-        themeChanger.changeTheme();
-      });
+      if (themeChanger.theme == "Auto") {
+        setState(() {
+          themeChanger.changeThemeMode("Auto");
+        });
+      }
     };
+
+    themeChanger.addListener(() {
+      setState(() {});
+    });
 
     super.initState();
   }

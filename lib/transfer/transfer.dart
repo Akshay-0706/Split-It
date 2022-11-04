@@ -4,12 +4,27 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:splitit/transfer/components/body.dart';
 
 class Transfer extends StatelessWidget {
-  const Transfer({super.key});
+  const Transfer(
+      {super.key,
+      required this.email,
+      required this.balance,
+      required this.name,
+      required this.photo,
+      required this.setBalance});
+  final String name, email, photo;
+  final double balance;
+  final Function setBalance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: TransferBody(),
+      body: TransferBody(
+        name: name,
+        email: email,
+        photo: photo,
+        balance: balance,
+        setBalance: setBalance,
+      ),
     );
   }
 }

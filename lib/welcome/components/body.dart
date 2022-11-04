@@ -36,45 +36,13 @@ class _WelcomeBodyState extends State<WelcomeBody> {
     return SafeArea(
       child: Column(
         children: [
-          SizedBox(height: getHeight(100)),
+          const Spacer(),
           const AppTitle(),
-          SizedBox(height: getHeight(40)),
-          // if (ThemeChanger.isThemeDark)
-
+          const Spacer(),
           LottieBuilder.asset(
             "assets/extras/lottie_welcome.json",
             repeat: false,
           ),
-          // if (!ThemeChanger.isThemeDark)
-          //   LottieBuilder.asset(
-          //     "assets/extras/lottie_light.json",
-          //     width: getHeight(300),
-          //     repeat: false,
-          //   ),
-
-          // Stack(
-          //   children: [
-          //     Image.asset("assets/extras/welcome_1.png"),
-          //     Row(
-          //       children: [
-          //         const Spacer(),
-          //         Image.asset("assets/extras/welcome_3.png"),
-          //       ],
-          //     ),
-          //     Image.asset("assets/extras/welcome.png"),
-          //     Padding(
-          //       padding: EdgeInsets.only(top: getHeight(300)),
-          //       child: Row(
-          //         children: [
-          //           const Spacer(),
-          //           Image.asset(
-          //             "assets/extras/welcome_2.png",
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ],
-          // ),
           const Spacer(),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: getHeight(20)),
@@ -106,6 +74,7 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                   pref.setString("name", user.displayName!);
                   pref.setString("photo", user.photoURL!);
                   pref.setString("email", user.email!);
+                  pref.setString("theme", "Auto");
                   Navigator.pushNamed(context, "/home");
                 });
               },
