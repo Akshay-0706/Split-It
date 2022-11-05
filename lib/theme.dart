@@ -23,8 +23,6 @@ class NewTheme {
         backgroundColor: Global.background,
         iconTheme: IconThemeData(color: Global.foreground),
       ),
-      drawerTheme: DrawerThemeData(backgroundColor: Global.drawerBg),
-      // textTheme: lightTextTheme(),
       scaffoldBackgroundColor: Global.background,
       backgroundColor: Global.background,
       colorScheme:
@@ -44,8 +42,6 @@ class NewTheme {
         backgroundColor: Global.backgroundDark,
         iconTheme: IconThemeData(color: Global.foregroundDark),
       ),
-      drawerTheme: DrawerThemeData(backgroundColor: Global.drawerBgDark),
-      // textTheme: darkTextTheme(),
       scaffoldBackgroundColor: Global.backgroundDark,
       backgroundColor: Global.backgroundDark,
       colorScheme:
@@ -55,22 +51,6 @@ class NewTheme {
       primaryColorDark: Global.foregroundDark,
     );
   }
-
-  // static TextTheme lightTextTheme() {
-  //   return TextTheme(
-  //     headline1: TextStyle(color: Global.primary),
-  //     // headline2: TextStyle(color: Global.primaryAlt),
-  //     bodyText1: TextStyle(color: Global.foreground),
-  //     bodyText2: TextStyle(color: Global.foregroundAlt),
-  //   );
-  // }
-
-  // static TextTheme darkTextTheme() => TextTheme(
-  //       headline1: TextStyle(color: Global.primaryDark),
-  //       // headline2: TextStyle(color: Global.primaryAltDark),
-  //       bodyText1: TextStyle(color: Global.foregroundDark),
-  //       bodyText2: TextStyle(color: Global.foregroundAltDark),
-  //     );
 }
 
 class Global {
@@ -79,12 +59,10 @@ class Global {
   static Color foreground = const Color(0xff1C1C23);
   static Color foregroundAlt = Colors.black;
   static Color background = const Color(0xffFCF7F8);
-  static Color drawerBg = const Color(0xffD2D2D2);
 
   // Dark mode colors
   static Color? primaryDark = const Color(0xff5E00F5);
   static Color foregroundDark = const Color(0xffFCF7F8);
   static Color foregroundAltDark = const Color(0xffD2D2D2);
   static Color backgroundDark = const Color(0xff1C1C23);
-  static Color drawerBgDark = Colors.black;
 }

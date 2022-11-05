@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:splitit/home/home.dart';
-import 'package:splitit/splash/splash.dart';
-import 'package:splitit/welcome/welcome.dart';
+import 'package:splitit/frontend/home/home.dart';
+import 'package:splitit/frontend/splash/splash.dart';
+import 'package:splitit/frontend/welcome/welcome.dart';
 
-
+import 'frontend/newbill/bill.dart';
 
 Map<String, WidgetBuilder> routes = {
   "/": (context) => const Splash(),
@@ -12,4 +12,5 @@ Map<String, WidgetBuilder> routes = {
   // "/signup": (context) => const SignUp(),
   // "/signin": (context) => const SignIn(),
   "/home": (context) => const Home(),
+  "/bill": (context) => const Bill(),
 };

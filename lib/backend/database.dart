@@ -13,7 +13,7 @@ class Database {
           balance = 0;
         }
       },
-    ).catchError((error) => print("Firebase error: $error"));
+    ).catchError((error) => throw error);
     return balance;
   }
 
@@ -25,6 +25,6 @@ class Database {
         .then(
           (snapshot) {},
         )
-        .catchError((error) => print("Firebase error: $error"));
+        .catchError((error) => throw error);
   }
 }
