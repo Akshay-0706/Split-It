@@ -8,7 +8,9 @@ class NavBar extends StatefulWidget {
   const NavBar({
     Key? key,
     required this.changeTab,
+    required this.current,
   }) : super(key: key);
+  final int current;
   final Function changeTab;
 
   @override
@@ -16,17 +18,18 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  int current = 0;
 
   List<String> iconNames = ["home", "transfer", "wallet", "account"];
 
   List<String> tabNames = ["Home", "Transfer", "Wallet", "Account"];
 
   changeNav(index) {
-    setState(() {
-      current = index;
-    });
     widget.changeTab(index);
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -49,7 +52,7 @@ class _NavBarState extends State<NavBar> {
           children: [
             ...List.generate(
               iconNames.length,
-              (index) => index == current
+              (index) => index == widget.current
                   ? NavSelected(
                       iconName: iconNames[index], tabName: tabNames[index])
                   : NavItem(

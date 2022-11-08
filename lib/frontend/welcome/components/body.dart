@@ -71,11 +71,12 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                 Auth.googleLogin().then((value) {
                   User user = value!;
                   pref.setStringList("transactions", []);
+                  pref.setStringList("bills", []);
                   pref.setString("name", user.displayName!);
                   pref.setString("photo", user.photoURL!);
                   pref.setString("email", user.email!);
                   pref.setString("theme", "Auto");
-                  Navigator.pushNamed(context, "/home");
+                  Navigator.pushReplacementNamed(context, "/home");
                 });
               },
             ),

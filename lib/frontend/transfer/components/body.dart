@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../components/primaryBtn.dart';
@@ -28,6 +29,7 @@ class _TransferBodyState extends State<TransferBody>
   late TabController tabController;
   final GlobalKey qrKey = GlobalKey(debugLabel: "qr");
   late QRViewController controller;
+  bool controllerIsReady = false;
   List<String> scannedData = [];
 
   String mode = "qr";
@@ -46,7 +48,7 @@ class _TransferBodyState extends State<TransferBody>
 
   @override
   void dispose() {
-    controller.dispose();
+    if (controllerIsReady) controller.dispose();
     super.dispose();
   }
 
@@ -74,8 +76,7 @@ class _TransferBodyState extends State<TransferBody>
             qrTabs(context),
             SizedBox(height: getHeight(40)),
             if (mode == "qr") QRCodeGenerator(widget: widget),
-            if (mode == "scan")
-              qrScanner(context),
+            if (mode == "scan") qrScanner(context),
           ],
         ),
       ),
@@ -84,184 +85,189 @@ class _TransferBodyState extends State<TransferBody>
 
   Container qrTabs(BuildContext context) {
     return Container(
-            height: getHeight(50),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            child: TabBar(
-              onTap: (value) {
-                setState(() {
-                  mode = value == 0 ? "qr" : "scan";
-                  if (mode == "qr") scannedData = [];
-                });
-                // futureIndices = fetchIndices(mode);
-                // callStock();
-              },
-              controller: tabController,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Theme.of(context).primaryColor,
-                    Theme.of(context).primaryColor.withOpacity(0.4),
-                  ],
-                ),
-              ),
-              labelColor: const Color(0xffFCF7F8),
-              labelStyle: TextStyle(
-                color: const Color(0xffFCF7F8),
-                fontSize: getHeight(16),
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedLabelColor: Colors.black,
-              tabs: tabs,
-            ),
-          );
+      height: getHeight(50),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: TabBar(
+        onTap: (value) {
+          setState(() {
+            mode = value == 0 ? "qr" : "scan";
+            if (mode == "qr") scannedData = [];
+          });
+          // futureIndices = fetchIndices(mode);
+          // callStock();
+        },
+        controller: tabController,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).primaryColor.withOpacity(0.4),
+            ],
+          ),
+        ),
+        labelColor: const Color(0xffFCF7F8),
+        labelStyle: TextStyle(
+          color: const Color(0xffFCF7F8),
+          fontSize: getHeight(16),
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelColor: Colors.black,
+        tabs: tabs,
+      ),
+    );
   }
 
   Expanded qrScanner(BuildContext context) {
     return Expanded(
-              child: SingleChildScrollView(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            Container(
+              width: getHeight(200),
+              height: getHeight(200),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: QRView(
+                  key: qrKey,
+                  onQRViewCreated: (controller) async {
+                    this.controller = controller;
+                    controllerIsReady = true;
+                    print("Status: ");
+                    print(await Permission.camera.status);
+                    if (await Permission.camera.isDenied) {
+                      print("Permanently denied!");
+                      openAppSettings();
+                    } else {
+                      controller.scannedDataStream.listen((scanData) {
+                        setState(() {
+                          scannedData
+                              .add(scanData.code!.split(",").elementAt(0));
+                          scannedData
+                              .add(scanData.code!.split(",").elementAt(1));
+                          scannedData
+                              .add(scanData.code!.split(",").elementAt(2));
+                          scannedData
+                              .add(scanData.code!.split(",").elementAt(3));
+                          controller.pauseCamera();
+                        });
+                      });
+                    }
+                  },
+                ),
+              ),
+            ),
+            if (scannedData.isEmpty)
+              Column(
+                children: [
+                  SizedBox(height: getHeight(20)),
+                  Text(
+                    "Scanning for QR Code...",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: getHeight(18),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: getHeight(20)),
+                  CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor)
+                ],
+              ),
+            if (scannedData.isNotEmpty)
+              SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
+                    SizedBox(height: getHeight(20)),
+                    Text(
+                      "Transfer to:",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontSize: getHeight(18),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: getHeight(20)),
                     Container(
-                      width: getHeight(200),
-                      height: getHeight(200),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context)
+                                .primaryColorDark
+                                .withOpacity(0.4),
+                            offset: const Offset(1, 1),
+                            blurRadius: 10,
+                          )
+                        ],
+                        borderRadius: BorderRadius.circular(35),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: QRView(
-                          key: qrKey,
-                          onQRViewCreated: (controller) {
-                            this.controller = controller;
-                            controller.resumeCamera();
-                            controller.scannedDataStream.listen((scanData) {
-                              setState(() {
-                                scannedData.add(
-                                    scanData.code!.split(",").elementAt(0));
-                                scannedData.add(
-                                    scanData.code!.split(",").elementAt(1));
-                                scannedData.add(
-                                    scanData.code!.split(",").elementAt(2));
-                                scannedData.add(
-                                    scanData.code!.split(",").elementAt(3));
-                                controller.pauseCamera();
-                              });
-                            });
-                          },
+                        clipBehavior: Clip.hardEdge,
+                        borderRadius: BorderRadius.circular(35),
+                        child: CachedNetworkImage(
+                          width: getHeight(70),
+                          height: getHeight(70),
+                          imageUrl: scannedData[3],
+                          placeholder: (context, url) => Container(
+                            width: getHeight(70),
+                            height: getHeight(70),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).backgroundColor,
+                                shape: BoxShape.circle),
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).primaryColor,
+                              strokeWidth: 8,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Icon(
+                            Icons.error_outline,
+                            color: Theme.of(context).primaryColorDark,
+                          ),
                         ),
                       ),
                     ),
-                    if (scannedData.isEmpty)
-                      Column(
-                        children: [
-                          SizedBox(height: getHeight(20)),
-                          Text(
-                            "Scanning for QR Code...",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColorDark,
-                              fontSize: getHeight(18),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: getHeight(20)),
-                          CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor)
-                        ],
+                    SizedBox(height: getHeight(20)),
+                    Text(
+                      scannedData[1],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontSize: getHeight(18),
+                        fontWeight: FontWeight.bold,
                       ),
-                    if (scannedData.isNotEmpty)
-                      SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(height: getHeight(20)),
-                            Text(
-                              "Transfer to:",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColorDark,
-                                fontSize: getHeight(18),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: getHeight(20)),
-                            Container(
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Theme.of(context)
-                                        .primaryColorDark
-                                        .withOpacity(0.4),
-                                    offset: const Offset(1, 1),
-                                    blurRadius: 10,
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(35),
-                              ),
-                              child: ClipRRect(
-                                clipBehavior: Clip.hardEdge,
-                                borderRadius: BorderRadius.circular(35),
-                                child: CachedNetworkImage(
-                                  width: getHeight(70),
-                                  height: getHeight(70),
-                                  imageUrl: scannedData[3],
-                                  placeholder: (context, url) => Container(
-                                    width: getHeight(70),
-                                    height: getHeight(70),
-                                    decoration: BoxDecoration(
-                                        color:
-                                            Theme.of(context).backgroundColor,
-                                        shape: BoxShape.circle),
-                                    child: CircularProgressIndicator(
-                                      color: Theme.of(context).primaryColor,
-                                      strokeWidth: 8,
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) => Icon(
-                                    Icons.error_outline,
-                                    color: Theme.of(context).primaryColorDark,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: getHeight(20)),
-                            Text(
-                              scannedData[1],
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColorDark,
-                                fontSize: getHeight(18),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: getHeight(20)),
-                            PrimaryBtn(
-                              primaryColor: Theme.of(context).primaryColor,
-                              secondaryColor: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.4),
-                              padding: 20,
-                              title: "Continue",
-                              tap: () {
-                                dialogBuilder(context);
-                              },
-                              titleColor: const Color(0xffFCF7F8),
-                              hasIcon: false,
-                            ),
-                          ],
-                        ),
-                      ),
+                    ),
+                    SizedBox(height: getHeight(20)),
+                    PrimaryBtn(
+                      primaryColor: Theme.of(context).primaryColor,
+                      secondaryColor:
+                          Theme.of(context).primaryColor.withOpacity(0.4),
+                      padding: 20,
+                      title: "Continue",
+                      tap: () {
+                        dialogBuilder(context);
+                      },
+                      titleColor: const Color(0xffFCF7F8),
+                      hasIcon: false,
+                    ),
                   ],
                 ),
               ),
-            );
+          ],
+        ),
+      ),
+    );
   }
 
   Future<dynamic> dialogBuilder(BuildContext context) {

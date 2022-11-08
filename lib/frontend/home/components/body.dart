@@ -10,45 +10,20 @@ class HomeBody extends StatefulWidget {
     super.key,
     required this.balance,
     required this.photo,
+    required this.changeTab,
+    required this.bills,
+    required this.onBillAdded,
   });
   final double balance;
   final String photo;
+  final Function changeTab, onBillAdded;
+  final List<Map<String, dynamic>> bills;
 
   @override
   State<HomeBody> createState() => _HomeBodyState();
 }
 
 class _HomeBodyState extends State<HomeBody> {
-  List<Map<dynamic, dynamic>> bills = [
-        {"name": "New bill", "amount": 203},
-        {"name": "New bill", "amount": 203},
-        {"name": "New bill", "amount": 203},
-        {"name": "New bill", "amount": 203},
-        {"name": "New bill", "amount": 203},
-        {"name": "New bill", "amount": 203},
-        {"name": "New bill", "amount": 203},
-      ],
-      people = [
-        {
-          0: "Akshay",
-          1: "Meet",
-          2: "Meet",
-          3: "Meet",
-          4: "Meet",
-          5: "Meet",
-          6: "Meet",
-          7: "Meet",
-          8: "Meet",
-          9: "Meet",
-        },
-        {0: "Akshay", 1: "Meet"},
-        {0: "Akshay", 1: "Meet"},
-        {0: "Akshay", 1: "Meet"},
-        {0: "Akshay", 1: "Meet"},
-        {0: "Akshay", 1: "Meet"},
-        {0: "Akshay", 1: "Meet"},
-      ];
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -64,7 +39,7 @@ class _HomeBodyState extends State<HomeBody> {
               SizedBox(height: getHeight(40)),
               balanceCardBuilder(context),
               SizedBox(height: getHeight(40)),
-              Bills(bills: bills, people: people),
+              Bills(bills: widget.bills, onBillAdded: widget.onBillAdded),
             ],
           ),
         ),
@@ -86,45 +61,53 @@ class _HomeBodyState extends State<HomeBody> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).primaryColorDark.withOpacity(0.4),
-                    offset: const Offset(1, 1),
-                    blurRadius: 10,
-                  )
-                ],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ClipRRect(
-                clipBehavior: Clip.hardEdge,
-                borderRadius: BorderRadius.circular(20),
-                child: CachedNetworkImage(
-                  width: getHeight(40),
-                  height: getHeight(40),
-                  imageUrl: widget.photo,
-                  placeholder: (context, url) => Container(
-                    width: getHeight(40),
-                    height: getHeight(40),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).backgroundColor,
-                        shape: BoxShape.circle),
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).primaryColor,
-                      strokeWidth: 8,
+          InkWell(
+            onTap: () => widget.changeTab(3),
+            borderRadius: BorderRadius.circular(20),
+            child: Hero(
+              tag: "Photo",
+              child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            Theme.of(context).primaryColorDark.withOpacity(0.4),
+                        offset: const Offset(1, 1),
+                        blurRadius: 10,
+                      )
+                    ],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.circular(20),
+                    child: CachedNetworkImage(
+                      width: getHeight(40),
+                      height: getHeight(40),
+                      imageUrl: widget.photo,
+                      placeholder: (context, url) => Container(
+                        width: getHeight(40),
+                        height: getHeight(40),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).backgroundColor,
+                            shape: BoxShape.circle),
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 8,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.error_outline,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
                     ),
+                  )
+                  // : CircularProgressIndicator(
+                  //     color: Theme.of(context).primaryColorDark,
+                  //   ),
                   ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.error_outline,
-                    color: Theme.of(context).primaryColorDark,
-                  ),
-                ),
-              )
-              // : CircularProgressIndicator(
-              //     color: Theme.of(context).primaryColorDark,
-              //   ),
-              )
+            ),
+          )
         ],
       ),
     );

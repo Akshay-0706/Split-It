@@ -8,9 +8,10 @@ class Account extends StatelessWidget {
       required this.email,
       required this.photo,
       required this.theme,
-      required this.changeTheme});
+      required this.changeTheme,
+      required this.changeTab});
   final String name, email, photo, theme;
-  final Function changeTheme;
+  final Function changeTheme, changeTab;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,7 @@ class Account extends StatelessWidget {
         photo: photo,
         theme: theme,
         changeTheme: changeTheme,
+        changeTab: changeTab,
       ),
     );
   }

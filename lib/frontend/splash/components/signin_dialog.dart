@@ -13,7 +13,7 @@ class SigninDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: Auth.googleLogin().then((value) {
-        Navigator.pushNamed(context, "/home");
+        Navigator.pushReplacementNamed(context, "/home");
       }),
       builder: (context, snapshot) {
         return Dialog(
