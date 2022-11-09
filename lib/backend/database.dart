@@ -27,4 +27,14 @@ class Database {
         )
         .catchError((error) => throw error);
   }
+
+  static Future<String> getLatestVersion(FirebaseDatabase databaseRef) async {
+    late String version;
+    await databaseRef.ref("version").get().then(
+      (snapshot) {
+        version = snapshot.value.toString();
+      },
+    ).catchError((error) => throw error);
+    return version;
+  }
 }

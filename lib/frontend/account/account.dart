@@ -15,14 +15,17 @@ class Account extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: AccountBody(
-        name: name,
-        email: email,
-        photo: photo,
-        theme: theme,
-        changeTheme: changeTheme,
-        changeTab: changeTab,
+    return WillPopScope(
+      onWillPop: () => changeTab(0),
+      child: Scaffold(
+        body: AccountBody(
+          name: name,
+          email: email,
+          photo: photo,
+          theme: theme,
+          changeTheme: changeTheme,
+          changeTab: changeTab,
+        ),
       ),
     );
   }

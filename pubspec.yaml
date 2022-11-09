@@ -41,7 +41,10 @@ dependencies:
   flutter_svg: ^1.1.1+1
   drop_shadow: ^0.0.1+4
   dotted_line: ^3.1.0
+  share_plus: ^6.2.0
   qr_flutter: ^4.0.0
+  url_launcher: ^6.1.6
+  package_info_plus: ^3.0.1
   qr_code_scanner: ^1.0.1
   permission_handler: ^10.2.0
   cached_network_image: ^3.2.2

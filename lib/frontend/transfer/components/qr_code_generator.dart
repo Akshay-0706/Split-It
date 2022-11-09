@@ -22,10 +22,10 @@ class QRCodeGenerator extends StatelessWidget {
               border: Border.all(
                   color: Theme.of(context).primaryColor.withOpacity(0.4),
                   width: 2),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               child: QrImage(
                 data:
                     "${widget.balance},${widget.name},${widget.email},${widget.photo}",

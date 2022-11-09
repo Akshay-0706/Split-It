@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: getHeight(10)),
         child: TextFormField(
+          maxLength: 6,
           style: TextStyle(color: Theme.of(context).primaryColorDark),
           onChanged: (value) => onChanged(double.parse(value)),
           validator: (value) =>
@@ -30,6 +31,7 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: "0.0",
+            counterText: "",
             hintStyle: TextStyle(
                 color: Theme.of(context).primaryColorLight,
                 fontSize: getHeight(16)),

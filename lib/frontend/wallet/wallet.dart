@@ -7,19 +7,23 @@ class Wallet extends StatelessWidget {
       required this.balance,
       required this.setBalance,
       required this.transactions,
-      required this.addTransaction});
+      required this.addTransaction,
+      required this.changeTab});
   final double balance;
-  final Function setBalance, addTransaction;
+  final Function setBalance, addTransaction, changeTab;
   final List<String> transactions;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: WalletBody(
-        balance: balance,
-        setBalance: setBalance,
-        transactions: transactions,
-        addTransaction: addTransaction,
+    return WillPopScope(
+      onWillPop: () => changeTab(0),
+      child: Scaffold(
+        body: WalletBody(
+          balance: balance,
+          setBalance: setBalance,
+          transactions: transactions,
+          addTransaction: addTransaction,
+        ),
       ),
     );
   }

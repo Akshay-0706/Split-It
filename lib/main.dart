@@ -25,6 +25,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    themeChanger.isDarkMode = themeChanger.currentTheme() == ThemeMode.system
+        ? WidgetsBinding.instance.window.platformBrightness == Brightness.dark
+        : themeChanger.currentTheme() == ThemeMode.dark;
+
     final window = WidgetsBinding.instance.window;
 
     if (widget.pref.getString("theme") == "Light") {
@@ -36,6 +40,14 @@ class _MyAppState extends State<MyApp> {
     }
 
     window.onPlatformBrightnessChanged = () {
+      setState(() {
+        themeChanger.isDarkMode =
+            themeChanger.currentTheme() == ThemeMode.system
+                ? WidgetsBinding.instance.window.platformBrightness ==
+                    Brightness.dark
+                : themeChanger.currentTheme() == ThemeMode.dark;
+      });
+
       if (themeChanger.theme == "Auto") {
         setState(() {
           themeChanger.changeThemeMode("Auto");

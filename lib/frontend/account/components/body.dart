@@ -4,6 +4,10 @@ import 'package:dropdown_button2/custom_dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:splitit/backend/auth.dart';
+import 'package:splitit/frontend/welcome/welcome.dart';
 import 'package:splitit/global.dart';
 
 import '../../../size.dart';
@@ -27,12 +31,20 @@ class AccountBody extends StatefulWidget {
 
 class _AccountBodyState extends State<AccountBody> {
   List<String> themes = ["Light", "Dark", "Auto"];
-  late String theme;
+  late String theme, version;
   final window = WidgetsBinding.instance.window;
+  bool isVersionReady = false;
 
   @override
   void initState() {
     theme = widget.theme;
+    PackageInfo.fromPlatform().then((packageInfo) {
+      setState(() {
+        version = packageInfo.version;
+        isVersionReady = true;
+      });
+    });
+
     super.initState();
   }
 
@@ -120,94 +132,169 @@ class _AccountBodyState extends State<AccountBody> {
                   ),
                   child: Column(
                     children: [
-                      OptionCard(
-                        title: "My Wallet",
-                        iconPath: "assets/icons/wallet.svg",
-                        onClicked: () => widget.changeTab(2),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(getHeight(20)),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              "assets/icons/home.svg",
-                              color: Theme.of(context).primaryColorDark,
-                            ),
-                            SizedBox(width: getHeight(10)),
-                            Text(
-                              "Theme",
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColorDark,
-                                fontSize: getHeight(16),
-                                fontWeight: FontWeight.bold,
+                      Expanded(
+                        flex: 4,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              OptionCard(
+                                title: "My Wallet",
+                                iconPath: "assets/icons/wallet.svg",
+                                onClicked: () => widget.changeTab(2),
                               ),
-                            ),
-                            const Spacer(),
-                            CustomDropdownButton2(
-                              hint: theme,
-                              value: theme,
-                              hintAlignment: Alignment.center,
-                              valueAlignment: Alignment.center,
-                              buttonWidth: getHeight(100),
-                              buttonPadding: EdgeInsets.zero,
-                              buttonHeight: getHeight(25),
-                              dropdownWidth: getHeight(100),
-                              dropdownItems: themes,
-                              iconEnabledColor:
-                                  Theme.of(context).primaryColorDark,
-                              buttonDecoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(4),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: getHeight(25)),
+                                child: DottedLine(
+                                  dashColor: Theme.of(context)
+                                      .primaryColorDark
+                                      .withOpacity(0.2),
+                                  lineThickness: 2,
+                                  dashRadius: 2,
+                                  dashLength: 6,
+                                  dashGapLength: 6,
+                                ),
                               ),
-                              dropdownDecoration: BoxDecoration(
-                                color: Theme.of(context).backgroundColor,
-                                borderRadius: BorderRadius.circular(4),
+                              Padding(
+                                padding: EdgeInsets.all(getHeight(25)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/icons/theme.svg",
+                                          color: Theme.of(context)
+                                              .primaryColorDark,
+                                        ),
+                                        SizedBox(width: getHeight(10)),
+                                        Text(
+                                          "Theme",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .primaryColorDark,
+                                            fontSize: getHeight(16),
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    CustomDropdownButton2(
+                                      hint: theme,
+                                      value: theme,
+                                      hintAlignment: Alignment.center,
+                                      valueAlignment: Alignment.center,
+                                      buttonWidth: getHeight(100),
+                                      buttonPadding: EdgeInsets.zero,
+                                      buttonHeight: getHeight(25),
+                                      dropdownWidth: getHeight(100),
+                                      dropdownItems: themes,
+                                      iconEnabledColor:
+                                          Theme.of(context).primaryColorDark,
+                                      buttonDecoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      dropdownDecoration: BoxDecoration(
+                                        color:
+                                            Theme.of(context).backgroundColor,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      icon: const FaIcon(
+                                          Icons.arrow_drop_down_rounded),
+                                      iconSize: getHeight(20),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          theme = value!;
+                                          widget.changeTheme(theme);
+                                          themeChanger.changeThemeMode(theme);
+                                          themeChanger.isDarkMode = themeChanger
+                                                      .currentTheme() ==
+                                                  ThemeMode.system
+                                              ? WidgetsBinding.instance.window
+                                                      .platformBrightness ==
+                                                  Brightness.dark
+                                              : themeChanger.currentTheme() ==
+                                                  ThemeMode.dark;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                              icon: const FaIcon(Icons.arrow_drop_down_rounded),
-                              iconSize: getHeight(20),
-                              onChanged: (value) {
-                                setState(() {
-                                  theme = value!;
-                                  themeChanger.changeThemeMode(theme);
-                                  widget.changeTheme(theme);
-                                });
-                              },
-                            ),
-                          ],
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: getHeight(25)),
+                                child: DottedLine(
+                                  dashColor: Theme.of(context)
+                                      .primaryColorDark
+                                      .withOpacity(0.2),
+                                  lineThickness: 2,
+                                  dashRadius: 2,
+                                  dashLength: 6,
+                                  dashGapLength: 6,
+                                ),
+                              ),
+                              OptionCard(
+                                title: "Invite People",
+                                iconPath: "assets/icons/invite.svg",
+                                onClicked: () {
+                                  Share.share(
+                                      "Check out this new app, Split-It! Now you can split your bills among friends, download the app using this link: https://drive.google.com/drive/folders/1F2kGvGIdpgGxSna5V6R_WtegFi_GRFEE?usp=sharing");
+                                },
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: getHeight(25)),
+                                child: DottedLine(
+                                  dashColor: Theme.of(context)
+                                      .primaryColorDark
+                                      .withOpacity(0.2),
+                                  lineThickness: 2,
+                                  dashRadius: 2,
+                                  dashLength: 6,
+                                  dashGapLength: 6,
+                                ),
+                              ),
+                              OptionCard(
+                                title: "Logout",
+                                iconPath: "assets/icons/logout.svg",
+                                onClicked: () {
+                                  Auth.googleLogout();
+                                  Navigator.push(
+                                    context,
+                                    CustomPageRoute(
+                                      context,
+                                      const Welcome(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: getHeight(20)),
-                        child: DottedLine(
-                          dashColor: Theme.of(context)
-                              .primaryColorDark
-                              .withOpacity(0.2),
-                          lineThickness: 2,
-                          dashRadius: 2,
-                          dashLength: 6,
-                          dashGapLength: 6,
-                        ),
-                      ),
-                      OptionCard(
-                        title: "Invite People",
-                        iconPath: "assets/icons/wallet.svg",
-                        onClicked: () {},
-                      ),
-                      OptionCard(
-                        title: "Logout",
-                        iconPath: "assets/icons/wallet.svg",
-                        onClicked: () {},
                       ),
                       const Spacer(),
-                      Text(
-                        "v 1.0",
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColorDark,
-                          fontSize: getHeight(16),
-                          fontWeight: FontWeight.bold,
+                      if (isVersionReady)
+                        Text(
+                          "v $version",
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColorDark,
+                            fontSize: getHeight(16),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
+                      if (!isVersionReady)
+                        SizedBox(
+                          width: getHeight(20),
+                          height: getHeight(20),
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColorDark,
+                            strokeWidth: 2,
+                          ),
+                        ),
                       const Spacer(),
                     ],
                   ),
@@ -233,49 +320,35 @@ class OptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onClicked,
-          child: Padding(
-            padding: EdgeInsets.all(getHeight(25)),
-            child: Ink(
-              child: Row(
-                children: [
-                  SvgPicture.asset(
-                    iconPath,
-                    color: Theme.of(context).primaryColorDark,
-                  ),
-                  SizedBox(width: getHeight(10)),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: getHeight(16),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: getHeight(20),
-                  ),
-                ],
+    return InkWell(
+      onTap: onClicked,
+      child: Padding(
+        padding: EdgeInsets.all(getHeight(25)),
+        child: Ink(
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                iconPath,
+                color: Theme.of(context).primaryColorDark,
               ),
-            ),
+              SizedBox(width: getHeight(10)),
+              Text(
+                title,
+                style: TextStyle(
+                  color: Theme.of(context).primaryColorDark,
+                  fontSize: getHeight(16),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: getHeight(20),
+              ),
+            ],
           ),
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: getHeight(25)),
-          child: DottedLine(
-            dashColor: Theme.of(context).primaryColorDark.withOpacity(0.2),
-            lineThickness: 2,
-            dashRadius: 2,
-            dashLength: 6,
-            dashGapLength: 6,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

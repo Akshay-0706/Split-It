@@ -8,20 +8,24 @@ class Transfer extends StatelessWidget {
       required this.balance,
       required this.name,
       required this.photo,
-      required this.setBalance});
+      required this.setBalance,
+      required this.changeTab});
   final String name, email, photo;
   final double balance;
-  final Function setBalance;
+  final Function setBalance, changeTab;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: TransferBody(
-        name: name,
-        email: email,
-        photo: photo,
-        balance: balance,
-        setBalance: setBalance,
+    return WillPopScope(
+      onWillPop: () => changeTab(0),
+      child: Scaffold(
+        body: TransferBody(
+          name: name,
+          email: email,
+          photo: photo,
+          balance: balance,
+          setBalance: setBalance,
+        ),
       ),
     );
   }

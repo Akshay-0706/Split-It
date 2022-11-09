@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:splitit/frontend/components/primaryBtn.dart';
+import 'package:splitit/frontend/components/primary_btn.dart';
 import 'package:splitit/frontend/components/secondary_btn.dart';
 
 import '../../app_title.dart';

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ThemeChanger with ChangeNotifier {
+  bool isDarkMode = true;
   String theme = "Auto";
 
   ThemeMode currentTheme() {
-    return theme == "Auto" ? ThemeMode.system : theme == "Dark" ? ThemeMode.dark : ThemeMode.light;
+    return theme == "Auto"
+        ? ThemeMode.system
+        : theme == "Dark"
+            ? ThemeMode.dark
+            : ThemeMode.light;
   }
 
   void changeThemeMode(String theme) {

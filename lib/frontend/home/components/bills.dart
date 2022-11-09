@@ -78,9 +78,12 @@ class _BillsState extends State<Bills> with TickerProviderStateMixin {
             bottom: 20,
             child: FloatingActionButton(
               onPressed: () => Navigator.push(
+                context,
+                CustomPageRoute(
                   context,
-                  CustomPageRoute(
-                      context, Bill(onBillAdded: widget.onBillAdded))),
+                  Bill(onBillAdded: widget.onBillAdded),
+                ),
+              ),
               backgroundColor: Theme.of(context).backgroundColor,
               child: Icon(
                 Icons.add,

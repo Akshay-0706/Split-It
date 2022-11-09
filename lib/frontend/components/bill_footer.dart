@@ -6,10 +6,12 @@ import '../../size.dart';
 class BillFooter extends StatelessWidget {
   const BillFooter({
     Key? key,
+    required this.isUnequal,
     required this.amt,
+    required this.totalAmt,
   }) : super(key: key);
-
-  final double amt;
+  final bool isUnequal;
+  final double amt, totalAmt;
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +38,9 @@ class BillFooter extends StatelessWidget {
             const Spacer(),
             SizedBox(width: getHeight(10)),
             Text(
-              "\u{20B9} ${amt.toStringAsFixed(2)}",
+              "\u{20B9} ${isUnequal ? totalAmt.toStringAsFixed(2) : amt.toStringAsFixed(2)}",
               style: TextStyle(
-                color: Theme.of(context).primaryColorDark,
+                color: totalAmt == amt ? Colors.greenAccent : isUnequal ? Colors.redAccent : Colors.greenAccent,
                 fontSize: getHeight(16),
                 fontWeight: FontWeight.bold,
               ),

@@ -6,7 +6,7 @@ import 'package:splitit/size.dart';
 
 import '../../../backend/auth.dart';
 import '../../../unimplemented/app_title.dart';
-import '../../components/primaryBtn.dart';
+import '../../components/primary_btn.dart';
 
 class WelcomeBody extends StatefulWidget {
   const WelcomeBody({super.key});
@@ -70,12 +70,16 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                 });
                 Auth.googleLogin().then((value) {
                   User user = value!;
-                  pref.setStringList("transactions", []);
-                  pref.setStringList("bills", []);
-                  pref.setString("name", user.displayName!);
-                  pref.setString("photo", user.photoURL!);
-                  pref.setString("email", user.email!);
-                  pref.setString("theme", "Auto");
+                  if (!pref.containsKey("email")) {
+                    pref.setStringList("transactions", []);
+                    pref.setStringList("bills", []);
+                    pref.setString("name", user.displayName!);
+                    pref.setString("photo", user.photoURL!);
+                    pref.setString("email", user.email!);
+                    pref.setDouble("willGet", 0.0);
+                    pref.setDouble("willPay", 0.0);
+                    pref.setString("theme", "Auto");
+                  }
                   Navigator.pushReplacementNamed(context, "/home");
                 });
               },

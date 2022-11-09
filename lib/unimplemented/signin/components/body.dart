@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../app_title.dart';
-import '../../../frontend/components/primaryBtn.dart';
+import '../../../frontend/components/primary_btn.dart';
 import '../../../frontend/components/secondary_btn.dart';
 import '../../../size.dart';
 

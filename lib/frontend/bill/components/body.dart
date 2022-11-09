@@ -1,6 +1,4 @@
-import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:splitit/backend/bill_data.dart';
 
 import '../../../size.dart';
@@ -20,7 +18,7 @@ class BillBody extends StatefulWidget {
 class _BillBodyState extends State<BillBody> {
   late BillData billData;
   String name = "";
-  double amt = 0, totalAmt = 0;
+  double amt = 0, willGet = 0, willPay = 0, paidByMe = 0, totalAmt = 0;
   bool paidByYou = true, isUnequal = false;
   int paidBy = -1;
   bool readyToSubmit = false;
@@ -31,6 +29,8 @@ class _BillBodyState extends State<BillBody> {
   bool friendsAdded = false;
 
   final TextEditingController controller = TextEditingController();
+  final FocusNode myFocus = FocusNode();
+  final List<FocusNode> focusNode = [];
 
   void onChangedBillName(String name) {
     this.name = name;
@@ -48,32 +48,65 @@ class _BillBodyState extends State<BillBody> {
     setState(() {
       friends.add(name);
       amounts.add(0.0);
-      totalAmt += amt / (friends.length + 1);
+      focusNode.add(FocusNode());
       friendsAdded = true;
     });
+    focusNode[focusNode.length - 1].requestFocus();
     validator();
   }
 
   void validator() {
-    if (name.isEmpty) {
-      print("name is empty");
-    }
-    if (amt == 0) {
-      print("amt is empty");
-    }
-    if (friends.isEmpty) {
-      print("friends is empty");
-    }
     if (name.isNotEmpty && amt != 0 && friends.isNotEmpty) {
+      if (isUnequal) {
+        if (totalAmt == amt) {
+          setState(() {
+            readyToSubmit = true;
+          });
+        } else {
+          setState(() {
+            readyToSubmit = false;
+          });
+        }
+      } else {
+        setState(() {
+          readyToSubmit = true;
+        });
+      }
+    } else {
       setState(() {
-        readyToSubmit = true;
+        readyToSubmit = false;
       });
     }
   }
 
+  void onAmtChanged(int index, double value) {
+    setState(() {
+      if (index == -1) {
+        totalAmt -= paidByMe;
+        paidByMe = value;
+        totalAmt += paidByMe;
+      } else {
+        totalAmt -= amounts[index];
+        amounts[index] = value;
+        totalAmt += amounts[index];
+      }
+    });
+    validator();
+  }
+
   void onSubmitted() {
-    widget
-        .onBillAdded(BillData(name, amt, isUnequal, amounts, friends, paidBy));
+    willGet = paidBy == -1
+        ? isUnequal
+            ? totalAmt - paidByMe
+            : amt - (amt / (friends.length + 1))
+        : 0.0;
+    willPay = paidBy == -1
+        ? 0.0
+        : isUnequal
+            ? paidByMe
+            : amt / (friends.length + 1);
+    widget.onBillAdded(willGet, willPay,
+        BillData(name, amt, isUnequal, amounts, friends, paidBy, paidByMe));
     Navigator.pop(context);
   }
 
@@ -135,7 +168,6 @@ class _BillBodyState extends State<BillBody> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    print("Paid by you clicked");
                     paidByYou = !paidByYou;
                     paidBy = paidByYou ? -1 : 0;
                   });
@@ -160,8 +192,11 @@ class _BillBodyState extends State<BillBody> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    print("Unequal sharing clicked");
                     isUnequal = !isUnequal;
+                    if (isUnequal) {
+                      myFocus.requestFocus();
+                      validator();
+                    }
                   });
                 },
                 child: Icon(
@@ -184,8 +219,10 @@ class _BillBodyState extends State<BillBody> {
           SizedBox(height: getHeight(20)),
           InkWell(
             onTap: () {
+              if (isUnequal) {
+                myFocus.requestFocus();
+              }
               if (!paidByYou && paidBy != -1) {
-                print("Click done");
                 setState(() {
                   paidByYou = true;
                   paidBy = -1;
@@ -195,10 +232,19 @@ class _BillBodyState extends State<BillBody> {
             borderRadius: BorderRadius.circular(8),
             child: FriendCard(
               name: "Me",
-              amount: isUnequal ? 0.0 : amt / (friends.length + 1),
+              amount: isUnequal ? paidByMe : amt / (friends.length + 1),
+              isUnequal: isUnequal,
+              focusNode: myFocus,
+              onSubmitted: () {
+                if (focusNode.isNotEmpty) {
+                  focusNode[0].requestFocus();
+                }
+              },
+              onChanged: onAmtChanged,
               color: paidBy == -1
                   ? Theme.of(context).primaryColor.withOpacity(0.5)
                   : Theme.of(context).primaryColorDark.withOpacity(0.05),
+              index: -1,
             ),
           ),
           SizedBox(height: getHeight(10)),
@@ -227,8 +273,10 @@ class _BillBodyState extends State<BillBody> {
                         children: [
                           InkWell(
                             onTap: () {
+                              if (isUnequal) {
+                                focusNode[index].requestFocus();
+                              }
                               if (!paidByYou && paidBy != index) {
-                                print("Click done");
                                 setState(() {
                                   paidBy = index;
                                 });
@@ -242,6 +290,8 @@ class _BillBodyState extends State<BillBody> {
                             borderRadius: BorderRadius.circular(8),
                             child: FriendCard(
                               name: friends[index],
+                              isUnequal: isUnequal,
+                              onChanged: onAmtChanged,
                               amount:
                                   isUnequal ? 0.0 : amt / (friends.length + 1),
                               color: paidBy == index
@@ -251,6 +301,13 @@ class _BillBodyState extends State<BillBody> {
                                   : Theme.of(context)
                                       .primaryColorDark
                                       .withOpacity(0.05),
+                              focusNode: focusNode[index],
+                              onSubmitted: () {
+                                if (index < friends.length - 1) {
+                                  focusNode[index + 1].requestFocus();
+                                }
+                              },
+                              index: index,
                             ),
                           ),
                           if (index != friends.length - 1)
@@ -263,7 +320,11 @@ class _BillBodyState extends State<BillBody> {
               ),
             ),
           SizedBox(height: getHeight(20)),
-          BillFooter(amt: amt),
+          BillFooter(
+            isUnequal: isUnequal,
+            amt: amt,
+            totalAmt: totalAmt,
+          ),
         ],
       ),
     ));

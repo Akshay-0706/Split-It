@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitit/frontend/components/primaryBtn.dart';
+import 'package:splitit/frontend/components/primary_btn.dart';
 
 import '../../../size.dart';
 import '../../components/custom_text_field.dart';
@@ -81,22 +81,19 @@ class _WalletBodyState extends State<WalletBody> {
             Expanded(
               child: PrimaryBtn(
                 primaryColor: Theme.of(context).primaryColor,
-                secondaryColor: Theme.of(context).primaryColor.withOpacity(0.4),
+                secondaryColor: Theme.of(context).primaryColor.withOpacity(0.8),
                 padding: 20,
                 title: "Add money",
-                tap: () {
-                  dialogBuilder(context, true);
-                },
+                tap: () => dialogBuilder(context, true),
                 titleColor: const Color(0xffFCF7F8),
                 hasIcon: false,
               ),
             ),
             Expanded(
               child: PrimaryBtn(
-                primaryColor:
-                    Theme.of(context).primaryColorDark.withOpacity(0.6),
+                primaryColor: Theme.of(context).primaryColorDark,
                 secondaryColor:
-                    Theme.of(context).primaryColorDark.withOpacity(0.4),
+                    Theme.of(context).primaryColorDark.withOpacity(0.8),
                 padding: 20,
                 title: "Withdraw money",
                 tap: () {

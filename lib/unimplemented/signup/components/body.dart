@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitit/frontend/components/primaryBtn.dart';
+import 'package:splitit/frontend/components/primary_btn.dart';
 
 import '../../app_title.dart';
 import '../../../frontend/components/secondary_btn.dart';

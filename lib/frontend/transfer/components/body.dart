@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../../components/primaryBtn.dart';
+import '../../components/primary_btn.dart';
 import '../../../size.dart';
 import '../../components/custom_text_field.dart';
+import 'camera_borders.dart';
 import 'qr_code_generator.dart';
 
 class TransferBody extends StatefulWidget {
@@ -59,25 +60,32 @@ class _TransferBodyState extends State<TransferBody>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.all(getHeight(20)),
-        child: Column(
-          children: [
-            SizedBox(height: getHeight(40)),
-            Text(
-              "QR Quick Transfer",
-              style: TextStyle(
-                color: Theme.of(context).primaryColorDark,
-                fontSize: getHeight(20),
-                fontWeight: FontWeight.bold,
-              ),
+      child: TweenAnimationBuilder(
+        tween: Tween<double>(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 500),
+        builder: (context, double opacity, child) => Opacity(
+          opacity: opacity,
+          child: Padding(
+            padding: EdgeInsets.all(getHeight(20)),
+            child: Column(
+              children: [
+                SizedBox(height: getHeight(40)),
+                Text(
+                  "QR Quick Transfer",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColorDark,
+                    fontSize: getHeight(20),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: getHeight(40)),
+                qrTabs(context),
+                SizedBox(height: getHeight(40)),
+                if (mode == "qr") QRCodeGenerator(widget: widget),
+                if (mode == "scan") qrScanner(context),
+              ],
             ),
-            SizedBox(height: getHeight(40)),
-            qrTabs(context),
-            SizedBox(height: getHeight(40)),
-            if (mode == "qr") QRCodeGenerator(widget: widget),
-            if (mode == "scan") qrScanner(context),
-          ],
+          ),
         ),
       ),
     );
@@ -129,42 +137,74 @@ class _TransferBodyState extends State<TransferBody>
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
-            Container(
-              width: getHeight(200),
-              height: getHeight(200),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: QRView(
-                  key: qrKey,
-                  onQRViewCreated: (controller) async {
-                    this.controller = controller;
-                    controllerIsReady = true;
-                    print("Status: ");
-                    print(await Permission.camera.status);
-                    if (await Permission.camera.isDenied) {
-                      print("Permanently denied!");
-                      openAppSettings();
-                    } else {
-                      controller.scannedDataStream.listen((scanData) {
-                        setState(() {
-                          scannedData
-                              .add(scanData.code!.split(",").elementAt(0));
-                          scannedData
-                              .add(scanData.code!.split(",").elementAt(1));
-                          scannedData
-                              .add(scanData.code!.split(",").elementAt(2));
-                          scannedData
-                              .add(scanData.code!.split(",").elementAt(3));
-                          controller.pauseCamera();
-                        });
-                      });
-                    }
-                  },
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                const CameraBorders(
+                  top: 0,
+                  left: 0,
+                  right: null,
+                  bottom: null,
                 ),
-              ),
+                const CameraBorders(
+                  top: 0,
+                  left: null,
+                  right: 0,
+                  bottom: null,
+                ),
+                const CameraBorders(
+                  top: null,
+                  left: 0,
+                  right: null,
+                  bottom: 0,
+                ),
+                const CameraBorders(
+                  top: null,
+                  left: null,
+                  right: 0,
+                  bottom: 0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    width: getHeight(200),
+                    height: getHeight(200),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: QRView(
+                        key: qrKey,
+                        onQRViewCreated: (controller) async {
+                          this.controller = controller;
+                          controllerIsReady = true;
+                          if (await Permission.camera.isDenied) {
+                            openAppSettings();
+                          } else {
+                            controller.resumeCamera();
+                            controller.scannedDataStream.listen((scanData) {
+                              setState(() {
+                                scannedData.add(
+                                    scanData.code!.split(",").elementAt(0));
+                                scannedData.add(
+                                    scanData.code!.split(",").elementAt(1));
+                                scannedData.add(
+                                    scanData.code!.split(",").elementAt(2));
+                                scannedData.add(
+                                    scanData.code!.split(",").elementAt(3));
+                                if (scannedData[2] != widget.email) {
+                                  controller.pauseCamera();
+                                }
+                              });
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             if (scannedData.isEmpty)
               Column(
@@ -184,7 +224,25 @@ class _TransferBodyState extends State<TransferBody>
                       color: Theme.of(context).primaryColor)
                 ],
               ),
-            if (scannedData.isNotEmpty)
+            if (scannedData.isNotEmpty && scannedData[2] == widget.email)
+              Column(
+                children: [
+                  SizedBox(height: getHeight(20)),
+                  Text(
+                    "Self transfer is meaningless,\nPlease scan different QR Code",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: getHeight(18),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: getHeight(20)),
+                  CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor)
+                ],
+              ),
+            if (scannedData.isNotEmpty && scannedData[2] != widget.email)
               SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(

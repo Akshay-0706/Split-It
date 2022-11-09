@@ -3,7 +3,6 @@ import 'package:splitit/frontend/home/components/bill_details_nav.dart';
 
 import '../../../backend/bill_data.dart';
 import '../../../size.dart';
-import '../../bill/components/body.dart';
 import '../../components/bill_footer.dart';
 import '../../components/friend_card.dart';
 
@@ -14,7 +13,7 @@ class BillDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BillData billData = BillData(bill["name"], bill["amt"], bill["isUnequal"],
-        bill["amounts"], bill["friends"], bill["paidBy"]);
+        bill["amounts"], bill["friends"], bill["paidBy"], bill["paidByMe"]);
 
     return SafeArea(
       child: Padding(
@@ -60,8 +59,13 @@ class BillDetails extends StatelessWidget {
             SizedBox(height: getHeight(20)),
             FriendCard(
               name: "Me",
+              isUnequal: false,
+              focusNode: FocusNode(),
+              onSubmitted: () {},
+              onChanged: () {},
+              index: -1,
               amount: billData.isUnequal
-                  ? 0.0
+                  ? billData.paidByMe
                   : billData.amt / (billData.friends.length + 1),
               color: billData.paidBy == -1
                   ? Theme.of(context).primaryColor.withOpacity(0.5)
@@ -79,8 +83,13 @@ class BillDetails extends StatelessWidget {
                         children: [
                           FriendCard(
                             name: billData.friends[index],
+                            isUnequal: false,
+                            focusNode: FocusNode(),
+                            onSubmitted: () {},
+                            onChanged: () {},
+                            index: index,
                             amount: billData.isUnequal
-                                ? 0.0
+                                ? billData.amounts[index]
                                 : billData.amt / (billData.friends.length + 1),
                             color: billData.paidBy == index
                                 ? Theme.of(context)
@@ -100,7 +109,11 @@ class BillDetails extends StatelessWidget {
               ),
             ),
             SizedBox(height: getHeight(20)),
-            BillFooter(amt: billData.amt),
+            BillFooter(
+              amt: billData.amt,
+              isUnequal: billData.isUnequal,
+              totalAmt: billData.amt,
+            ),
           ],
         ),
       ),

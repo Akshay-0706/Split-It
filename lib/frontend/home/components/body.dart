@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:splitit/size.dart';
 
 import 'bills.dart';
+import 'will_get_or_pay.dart';
 
 class HomeBody extends StatefulWidget {
   const HomeBody({
     super.key,
     required this.balance,
+    required this.willGet,
+    required this.willPay,
     required this.photo,
     required this.changeTab,
     required this.bills,
     required this.onBillAdded,
   });
-  final double balance;
+  final double balance, willGet, willPay;
   final String photo;
   final Function changeTab, onBillAdded;
   final List<Map<String, dynamic>> bills;
@@ -162,56 +165,15 @@ class _HomeBodyState extends State<HomeBody> {
               SizedBox(height: getHeight(20)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  WillGetOrPay(
-                    value: 0,
-                    willGet: true,
-                  ),
-                  WillGetOrPay(
-                    value: 0,
-                    willGet: false,
-                  ),
+                children: [
+                  WillGetOrPay(value: widget.willGet, willGet: true),
+                  WillGetOrPay(value: widget.willPay, willGet: false),
                 ],
               )
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class WillGetOrPay extends StatelessWidget {
-  const WillGetOrPay({
-    Key? key,
-    required this.value,
-    required this.willGet,
-  }) : super(key: key);
-  final double value;
-  final bool willGet;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "\u{20B9} $value",
-          style: TextStyle(
-            color: willGet ? Colors.greenAccent : Colors.redAccent,
-            fontSize: getHeight(16),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          willGet ? "will get" : "will pay",
-          style: TextStyle(
-            color: Theme.of(context).backgroundColor,
-            fontSize: getHeight(15),
-            fontWeight: FontWeight.bold,
-          ),
-        )
-      ],
     );
   }
 }
