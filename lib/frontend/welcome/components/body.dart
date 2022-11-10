@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splitit/size.dart';
 
-import '../../../backend/auth.dart';
+import '../../../backend/account.dart';
 import '../../../unimplemented/app_title.dart';
 import '../../components/primary_btn.dart';
 
@@ -68,12 +68,13 @@ class _WelcomeBodyState extends State<WelcomeBody> {
                 setState(() {
                   signin = true;
                 });
-                Auth.googleLogin().then((value) {
+                Account.googleLogin().then((value) {
                   User user = value!;
-                  if (!pref.containsKey("email")) {
+                  pref.setString("name", user.displayName!);
+                  if (!pref.containsKey("email") ||
+                      (pref.getString("email") != user.email)) {
                     pref.setStringList("transactions", []);
                     pref.setStringList("bills", []);
-                    pref.setString("name", user.displayName!);
                     pref.setString("photo", user.photoURL!);
                     pref.setString("email", user.email!);
                     pref.setDouble("willGet", 0.0);

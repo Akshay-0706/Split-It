@@ -246,7 +246,7 @@ class _HomeState extends State<Home> {
     });
     pref.setStringList("bills", BillEncoder.fromJsonList(bills).data);
     pref.setDouble("willGet", this.willGet);
-    pref.setDouble("willGet", this.willPay);
+    pref.setDouble("willPay", this.willPay);
   }
 
   @override

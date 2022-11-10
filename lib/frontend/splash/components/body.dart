@@ -24,7 +24,7 @@ class _SplashBodyState extends State<SplashBody> {
     sharedPreferences.then((value) {
       pref = value;
       setState(() {
-        signedIn = pref.containsKey("email");
+        signedIn = pref.containsKey("name");
         prefIsReady = true;
       });
     });

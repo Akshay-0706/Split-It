@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:splitit/frontend/splash/components/signin_texts.dart';
 
-import '../../../backend/auth.dart';
+import '../../../backend/account.dart';
 import '../../../size.dart';
 
 class SigninDialog extends StatelessWidget {
@@ -12,7 +12,7 @@ class SigninDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Auth.googleLogin().then((value) {
+      future: Account.googleLogin().then((value) {
         Navigator.pushReplacementNamed(context, "/home");
       }),
       builder: (context, snapshot) {
