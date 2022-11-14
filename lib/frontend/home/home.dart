@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splitit/backend/bill_data.dart';
+import 'package:splitit/backend/bill.dart';
 import 'package:splitit/backend/bill_decoder.dart';
 import 'package:splitit/backend/bill_encoder.dart';
 import 'package:splitit/frontend/home/components/body.dart';
@@ -229,7 +229,7 @@ class _HomeState extends State<Home> {
     pref.setStringList("transactions", transactions);
   }
 
-  void onBillAdded(double willGet, double willPay, BillData billData) {
+  void onBillAdded(double willGet, double willPay, Bill billData) {
     Map<String, dynamic> bill = {
       "name": billData.name,
       "amt": billData.amt,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitit/backend/bill_data.dart';
+import 'package:splitit/backend/bill.dart';
 
 import '../../../size.dart';
 import '../../components/bill_footer.dart';
@@ -7,16 +7,16 @@ import '../../components/friend_card.dart';
 import 'bill_info.dart';
 import 'bill_nav.dart';
 
-class BillBody extends StatefulWidget {
-  const BillBody({super.key, required this.onBillAdded});
+class Splitter extends StatefulWidget {
+  const Splitter({super.key, required this.onBillAdded});
   final Function onBillAdded;
 
   @override
-  State<BillBody> createState() => _BillBodyState();
+  State<Splitter> createState() => _SplitterState();
 }
 
-class _BillBodyState extends State<BillBody> {
-  late BillData billData;
+class _SplitterState extends State<Splitter> {
+  late Bill bill;
   String name = "";
   double amt = 0, willGet = 0, willPay = 0, paidByMe = 0, totalAmt = 0;
   bool paidByYou = true, isUnequal = false;
@@ -79,7 +79,7 @@ class _BillBodyState extends State<BillBody> {
     }
   }
 
-  void onAmtChanged(int index, double value) {
+  void billSplitter(int index, double value) {
     setState(() {
       if (index == -1) {
         totalAmt -= paidByMe;
@@ -106,12 +106,14 @@ class _BillBodyState extends State<BillBody> {
             ? paidByMe
             : amt / (friends.length + 1);
     widget.onBillAdded(willGet, willPay,
-        BillData(name, amt, isUnequal, amounts, friends, paidBy, paidByMe));
+        Bill(name, amt, isUnequal, amounts, friends, paidBy, paidByMe));
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    int noOfFriends = friends.length;
+
     return SafeArea(
         child: Padding(
       padding: EdgeInsets.all(getHeight(20)),
@@ -232,7 +234,7 @@ class _BillBodyState extends State<BillBody> {
             borderRadius: BorderRadius.circular(8),
             child: FriendCard(
               name: "Me",
-              amount: isUnequal ? paidByMe : amt / (friends.length + 1),
+              amount: isUnequal ? paidByMe : amt / (noOfFriends + 1),
               isUnequal: isUnequal,
               focusNode: myFocus,
               onSubmitted: () {
@@ -240,7 +242,7 @@ class _BillBodyState extends State<BillBody> {
                   focusNode[0].requestFocus();
                 }
               },
-              onChanged: onAmtChanged,
+              onChanged: billSplitter,
               color: paidBy == -1
                   ? Theme.of(context).primaryColor.withOpacity(0.5)
                   : Theme.of(context).primaryColorDark.withOpacity(0.05),
@@ -268,7 +270,7 @@ class _BillBodyState extends State<BillBody> {
                 child: Column(
                   children: [
                     ...List.generate(
-                      friends.length,
+                      noOfFriends,
                       (index) => Column(
                         children: [
                           InkWell(
@@ -291,9 +293,8 @@ class _BillBodyState extends State<BillBody> {
                             child: FriendCard(
                               name: friends[index],
                               isUnequal: isUnequal,
-                              onChanged: onAmtChanged,
-                              amount:
-                                  isUnequal ? 0.0 : amt / (friends.length + 1),
+                              onChanged: billSplitter,
+                              amount: isUnequal ? 0.0 : amt / (noOfFriends + 1),
                               color: paidBy == index
                                   ? Theme.of(context)
                                       .primaryColor
@@ -303,14 +304,14 @@ class _BillBodyState extends State<BillBody> {
                                       .withOpacity(0.05),
                               focusNode: focusNode[index],
                               onSubmitted: () {
-                                if (index < friends.length - 1) {
+                                if (index < noOfFriends - 1) {
                                   focusNode[index + 1].requestFocus();
                                 }
                               },
                               index: index,
                             ),
                           ),
-                          if (index != friends.length - 1)
+                          if (index != noOfFriends - 1)
                             SizedBox(height: getHeight(10)),
                         ],
                       ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:splitit/frontend/home/components/bill_details.dart';
 
 import '../../components/custom_page_route.dart';
-import '../../bill/bill.dart';
+import '../../bill/bill_creater.dart';
 import '../../../size.dart';
 
 class Bills extends StatefulWidget {
@@ -81,7 +81,7 @@ class _BillsState extends State<Bills> with TickerProviderStateMixin {
                 context,
                 CustomPageRoute(
                   context,
-                  Bill(onBillAdded: widget.onBillAdded),
+                  BillCreater(onBillAdded: widget.onBillAdded),
                 ),
               ),
               backgroundColor: Theme.of(context).backgroundColor,

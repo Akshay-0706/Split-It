@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:splitit/frontend/home/components/bill_details_nav.dart';
 
-import '../../../backend/bill_data.dart';
+import '../../../backend/bill.dart';
 import '../../../size.dart';
 import '../../components/bill_footer.dart';
 import '../../components/friend_card.dart';
@@ -12,7 +12,7 @@ class BillDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BillData billData = BillData(bill["name"], bill["amt"], bill["isUnequal"],
+    Bill billData = Bill(bill["name"], bill["amt"], bill["isUnequal"],
         bill["amounts"], bill["friends"], bill["paidBy"], bill["paidByMe"]);
 
     return SafeArea(

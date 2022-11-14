@@ -1,41 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:splitit/backend/account.dart';
 
 import '../../../size.dart';
-import 'body.dart';
+import 'scanner_to_transfer.dart';
 
-class QRCodeGenerator extends StatelessWidget {
-  const QRCodeGenerator({
+class QR extends StatelessWidget {
+  QR({
     Key? key,
     required this.widget,
   }) : super(key: key);
 
-  final TransferBody widget;
+  final ScannerToTransfer widget;
+  Image? QRCode;
+  int? accId;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                  color: Theme.of(context).primaryColor.withOpacity(0.4),
-                  width: 2),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: QrImage(
-                data:
-                    "${widget.balance},${widget.name},${widget.email},${widget.photo}",
-                backgroundColor:
-                    Theme.of(context).primaryColor.withOpacity(0.02),
-                foregroundColor: Theme.of(context).primaryColorDark,
-                size: getHeight(200),
-              ),
-            ),
-          ),
+          getQRCode(context),
           SizedBox(height: getHeight(20)),
           Text(
             "Ask your friend to scan this QR code",
@@ -65,6 +50,29 @@ class QRCodeGenerator extends StatelessWidget {
           const Spacer(),
         ],
       ),
+    );
+  }
+
+  Container getQRCode(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: Theme.of(context).primaryColor.withOpacity(0.4), width: 2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: generateQRCode(context),
+      ),
+    );
+  }
+
+  QrImage generateQRCode(BuildContext context) {
+    return QrImage(
+      data: "${widget.balance},${widget.name},${widget.email},${widget.photo}",
+      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.02),
+      foregroundColor: Theme.of(context).primaryColorDark,
+      size: getHeight(200),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:splitit/frontend/transfer/components/body.dart';
+import 'package:splitit/frontend/transfer/components/scanner_to_transfer.dart';
 
 class Transfer extends StatelessWidget {
   const Transfer(
@@ -19,7 +19,7 @@ class Transfer extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => changeTab(0),
       child: Scaffold(
-        body: TransferBody(
+        body: ScannerToTransfer(
           name: name,
           email: email,
           photo: photo,
