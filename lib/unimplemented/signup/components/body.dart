@@ -3,7 +3,7 @@ import 'package:splitit/frontend/components/primary_btn.dart';
 
 import '../../app_title.dart';
 import '../../../frontend/components/secondary_btn.dart';
-import '../../../size.dart';
+import '../../../global.dart';
 
 class SignUpBody extends StatelessWidget {
   const SignUpBody({super.key});

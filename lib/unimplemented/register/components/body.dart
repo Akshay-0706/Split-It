@@ -4,7 +4,7 @@ import 'package:splitit/frontend/components/primary_btn.dart';
 import 'package:splitit/frontend/components/secondary_btn.dart';
 
 import '../../app_title.dart';
-import '../../../size.dart';
+import '../../../global.dart';
 
 class RegisterBody extends StatelessWidget {
   const RegisterBody({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 
 class BillInfo extends StatelessWidget {
   const BillInfo({

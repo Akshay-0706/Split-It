@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:splitit/frontend/home/components/bill_details_nav.dart';
 
 import '../../../backend/bill_data.dart';
-import '../../../size.dart';
+import '../../../global.dart';
 import '../../components/bill_footer.dart';
 import '../../components/friend_card.dart';
 

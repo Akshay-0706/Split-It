@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 
 class CameraBorders extends StatelessWidget {
   const CameraBorders({

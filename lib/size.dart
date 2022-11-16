@@ -13,6 +13,3 @@ class SizeConfig {
     orientation = mediaQueryData.orientation;
   }
 }
-
-getWidth(double width) => (width / 375.0) * SizeConfig.width;
-getHeight(double height) => (height / 812.0) * SizeConfig.height;

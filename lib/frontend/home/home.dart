@@ -16,7 +16,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../account/account.dart';
 import '../../backend/database.dart';
-import '../../size.dart';
 import '../components/primary_btn.dart';
 import '../transfer/transfer.dart';
 import '../wallet/wallet.dart';
@@ -247,6 +246,8 @@ class _HomeState extends State<Home> {
     pref.setStringList("bills", BillEncoder.fromJsonList(bills).data);
     pref.setDouble("willGet", this.willGet);
     pref.setDouble("willPay", this.willPay);
+
+    snackBarBuilder(context, "${billData.name} bill added", Colors.greenAccent);
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:splitit/frontend/components/primary_btn.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 import '../../components/custom_text_field.dart';
 import 'transactions_list.dart';
 
@@ -24,6 +24,7 @@ class _WalletBodyState extends State<WalletBody> {
   double changedMoney = 0.0;
 
   void onChanged(double money) {
+    print(money);
     changedMoney = money;
   }
 
@@ -96,9 +97,7 @@ class _WalletBodyState extends State<WalletBody> {
                     Theme.of(context).primaryColorDark.withOpacity(0.8),
                 padding: 20,
                 title: "Withdraw money",
-                tap: () {
-                  dialogBuilder(context, false);
-                },
+                tap: () => dialogBuilder(context, false),
                 titleColor: Theme.of(context).backgroundColor,
                 hasIcon: false,
               ),
@@ -111,44 +110,60 @@ class _WalletBodyState extends State<WalletBody> {
 
   Future<dynamic> dialogBuilder(BuildContext context, bool toAdd) {
     return showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              title: Text(
-                "Add money",
-                style: TextStyle(
-                  color: Theme.of(context).primaryColorLight,
-                  fontSize: getHeight(20),
-                ),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CustomTextField(onChanged: onChanged),
-                  SizedBox(height: getHeight(10)),
-                  PrimaryBtn(
-                    primaryColor: Theme.of(context).primaryColor,
-                    secondaryColor:
-                        Theme.of(context).primaryColor.withOpacity(0.4),
-                    padding: 0,
-                    title: "Done",
-                    tap: () {
-                      if (toAdd && changedMoney > 0 ||
-                          !toAdd && changedMoney <= widget.balance) {
-                        widget.setBalance(toAdd
-                            ? widget.balance + changedMoney
-                            : widget.balance - changedMoney);
-                        widget.addTransaction(toAdd
-                            ? "Money added,$changedMoney"
-                            : "Money withdrawn,$changedMoney");
-                      }
-                      Navigator.pop(context);
-                    },
-                    titleColor: const Color(0xffFCF7F8),
-                    hasIcon: false,
-                  )
-                ],
-              ),
-              backgroundColor: Theme.of(context).backgroundColor,
-            ));
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(
+          toAdd ? "Add money" : "Withdraw money",
+          style: TextStyle(
+            color: Theme.of(context).primaryColorLight,
+            fontSize: getHeight(20),
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTextField(onChanged: onChanged),
+            SizedBox(height: getHeight(10)),
+            PrimaryBtn(
+              primaryColor: Theme.of(context).primaryColor,
+              secondaryColor: Theme.of(context).primaryColor.withOpacity(0.4),
+              padding: 0,
+              title: "Done",
+              tap: () {
+                if (changedMoney <= 0) {
+                  snackBarBuilder(context, "Amount should be greater than zero",
+                      Colors.redAccent);
+                }
+                if (!toAdd && changedMoney > widget.balance) {
+                  snackBarBuilder(
+                      context, "Insufficient balance!", Colors.redAccent);
+                }
+                if (toAdd && changedMoney > 0 ||
+                    !toAdd &&
+                        changedMoney > 0 &&
+                        changedMoney <= widget.balance) {
+                  widget.setBalance(toAdd
+                      ? widget.balance + changedMoney
+                      : widget.balance - changedMoney);
+                  widget.addTransaction(toAdd
+                      ? "Money added,$changedMoney"
+                      : "Money withdrawn,$changedMoney");
+                  snackBarBuilder(
+                      context,
+                      toAdd
+                          ? "Added \u{20B9} $changedMoney"
+                          : "Withdrawn \u{20B9} $changedMoney",
+                      Colors.greenAccent);
+                }
+                Navigator.pop(context);
+              },
+              titleColor: const Color(0xffFCF7F8),
+              hasIcon: false,
+            )
+          ],
+        ),
+        backgroundColor: Theme.of(context).backgroundColor,
+      ),
+    );
   }
 }

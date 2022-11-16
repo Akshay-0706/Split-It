@@ -4,7 +4,7 @@ import 'package:splitit/frontend/home/components/bill_details.dart';
 
 import '../../components/custom_page_route.dart';
 import '../../bill/bill.dart';
-import '../../../size.dart';
+import '../../../global.dart';
 
 class Bills extends StatefulWidget {
   const Bills({

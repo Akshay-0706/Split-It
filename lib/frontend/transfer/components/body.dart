@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import '../../components/primary_btn.dart';
-import '../../../size.dart';
+import '../../../global.dart';
 import '../../components/custom_text_field.dart';
 import 'camera_borders.dart';
 import 'qr_code_generator.dart';
@@ -351,11 +351,20 @@ class _TransferBodyState extends State<TransferBody>
                     padding: 0,
                     title: "Done",
                     tap: () {
+                      if (transferMoney > widget.balance) {
+                        snackBarBuilder(context, "Insuffiecient balance!",
+                            Colors.redAccent);
+                      }
                       if (transferMoney <= widget.balance) {
                         widget.setBalance(widget.balance - transferMoney);
                         widget.setBalance(
                             double.parse(scannedData[0]) + transferMoney,
                             scannedData[2]);
+
+                        snackBarBuilder(
+                            context,
+                            "Transferred \u{20B9} $transferMoney",
+                            Colors.greenAccent);
                       }
                       Navigator.pop(context);
                     },

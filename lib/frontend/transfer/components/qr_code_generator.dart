@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 import 'body.dart';
 
 class QRCodeGenerator extends StatelessWidget {

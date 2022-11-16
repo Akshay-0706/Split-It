@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 
 class NavSelected extends StatefulWidget {
   const NavSelected({

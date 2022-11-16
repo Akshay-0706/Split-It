@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 import 'body.dart';
 
 class Transactions extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 
-import '../../size.dart';
+import '../../../global.dart';
 
 class BillFooter extends StatelessWidget {
   const BillFooter({

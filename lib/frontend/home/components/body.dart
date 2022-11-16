@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:splitit/size.dart';
 
+import '../../../global.dart';
 import 'bills.dart';
 import 'will_get_or_pay.dart';
 

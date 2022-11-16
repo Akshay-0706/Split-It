@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../size.dart';
+import '../../../global.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField({Key? key, required this.onChanged}) : super(key: key);
@@ -19,7 +19,8 @@ class CustomTextField extends StatelessWidget {
         child: TextFormField(
           maxLength: 6,
           style: TextStyle(color: Theme.of(context).primaryColorDark),
-          onChanged: (value) => onChanged(double.parse(value)),
+          onChanged: (value) =>
+              onChanged(value.isEmpty ? 0.0 : double.parse(value)),
           validator: (value) =>
               double.tryParse(value!) == null ? "Invalid double" : null,
           keyboardType: TextInputType.number,

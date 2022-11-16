@@ -2,7 +2,7 @@ import 'package:drop_shadow/drop_shadow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../size.dart';
+import '../../../global.dart';
 
 class SplashContent extends StatelessWidget {
   const SplashContent({

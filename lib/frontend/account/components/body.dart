@@ -6,11 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:splitit/backend/account.dart';
+import 'package:splitit/backend/auth.dart';
 import 'package:splitit/frontend/welcome/welcome.dart';
 import 'package:splitit/global.dart';
 
-import '../../../size.dart';
 import '../../components/custom_page_route.dart';
 
 class AccountBody extends StatefulWidget {
@@ -262,7 +261,7 @@ class _AccountBodyState extends State<AccountBody> {
                                 title: "Logout",
                                 iconPath: "assets/icons/logout.svg",
                                 onClicked: () {
-                                  Account.googleLogout();
+                                  Auth.googleLogout();
                                   Navigator.pushReplacement(
                                     context,
                                     CustomPageRoute(
